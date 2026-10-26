@@ -1,6 +1,6 @@
 # Doğrulama durumu
 
-Paket 3.0.4; rapor ve runtime 3.0. Paket tarihi: 26 Ekim 2026.
+Paket 3.0.6; rapor 3.1; runtime 3.0. Paket tarihi: 26 Ekim 2026.
 
 - Kontrol testlerinin 8/8 sonucu validation/tests içindedir; bu kayıtlar fixture testlerine aittir.
 - Repo bütünlük, kaynak eşlemesi ve Markdown yerel bağlantı kontrolleri yeniden çalıştırıldı ve geçti.
@@ -14,3 +14,5 @@ Detaylı ilk kayıt: [Laboratuvar doğrulama tablosu](../php2shell-lab/VALIDATIO
 Kontrol sonuçları kendi kapsamları içinde yorumlanır. Runtime sonucu alınmadan gerçek PHP çalıştırmasının veya bağımsız CVE sömürüsünün doğrulandığı ileri sürülmez.
 
 Paket kontrol özeti: [package-checks.json](../validation/tests/package-checks.json).
+
+- Web sürüm ön kontrolü için 9/9 test geçti. Yerel HTTP yönlendirme ve çelişki testleri ile TLS hata davranışı dahil; dış hedef ve CVE istismarı sınanmadı.

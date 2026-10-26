@@ -9,7 +9,7 @@ Kamu ve özel sektörün BT, sistem yönetimi, DevSecOps, SOC ve olay müdahale 
 Ömer TOKMAK  
 Atilla Yusuf Er  
 Prof. Dr. Arif SARI  
-**Rapor ve runtime:** 3.0 · **Laboratuvar paketi:** 3.0.4  
+**Rapor:** 3.1 · **Runtime:** 3.0 · **Dağıtım paketi:** 3.0.6  
 **CVE kapsamı:** CVE-2026-109618 ve CVE-2026-109619
 
 ## Teknik rapor ve laboratuvar
@@ -25,6 +25,7 @@ Prof. Dr. Arif SARI
 | Kontrol | Durum |
 |---|---|
 | Python/HTTP fixture testleri | Kontrol testlerinde 8/8 geçti. |
+| Web sürüm ön kontrol testleri | 9/9 geçti; CVE istismarı sınanmadı. |
 | Compose YAML ve kaynak yapısı | Ayrıştırma ve yapısal kontroller yapıldı. |
 | Gerçek Docker/PHP/Nginx runtime | Kontrol testlerinde çalıştırılmadı; manuel Actions workflow'u sağlandı. |
 | WAF/IDS/SIEM | Sensör pakete dahil değil; gerçek alarm kabulü ayrı yapılır. |
@@ -41,7 +42,8 @@ Bu araçtaki PASS, seçilmiş kontrol beklentisinin karşılandığını göster
 | `php2shell-lab/config/` | PHP INI ve Nginx yapılandırması |
 | `php2shell-lab/tools/` | `check.py`, `collect.py`, `lifecycle_model.py` |
 | `php2shell-lab/tests/` | Gerçek localhost HTTP fixture testleri |
-| `tools/` | Repo bütünlüğü, kaynak eşlemesi ve runtime CI yardımcıları |
+| `tools/` | Web sürüm ön kontrolü, repo bütünlüğü ve runtime CI yardımcıları |
+| `tests/` | Web sürüm ön kontrol aracının dokuz testi |
 | `validation/tests/` | Hassas veri içermeyen hazırlama test kayıtları |
 | `.github/workflows/` | Otomatik kontroller ve elle başlatılan runtime kontrolü |
 
@@ -52,6 +54,7 @@ Python 3.10+; çalışma için ayrı Ubuntu VM, Docker Engine ve Compose v2 gere
 ```bash
 python3 tools/verify_release.py
 python3 -m unittest discover -s php2shell-lab/tests -v
+python3 -m unittest discover -s tests -v
 ```
 
 Laboratuvar servisleri kapalıyken fixture testlerini çalıştırın. Ardından:
@@ -72,7 +75,7 @@ FPM, sınırlı OOM, günlük toplama ve kapatma için [laboratuvar README](php2
 
 ## GitHub Actions
 
-`Repository checks`, push ve pull request üzerinde bütünlük/kaynak eşlemesi, Python derleme, fixture testleri ve Compose config kontrolünü çalıştırır. `Runtime verification`, yalnız Actions sayfasından elle başlatılır; imajları alır, PHP lint, Apache/FPM istekleri ve Nginx kontrolünü yürütür. OOM varsayılan olarak kapalıdır.
+`Repository checks`, push ve pull request üzerinde bütünlük/kaynak eşlemesi, Python derleme, fixture testleri, web sürüm ön kontrol testleri ve Compose config kontrolünü çalıştırır. `Runtime verification`, yalnız Actions sayfasından elle başlatılır; imajları alır, PHP lint, Apache/FPM istekleri ve Nginx kontrolünü yürütür. OOM varsayılan olarak kapalıdır.
 
 Workflow dosyasının depoda bulunması testin geçtiği anlamına gelmez. Gerçek çalıştırma sonucu ve artifact'ları esas alın. Başarılı runtime çalışması bile bağımsız UAF/RCE kanıtı değildir.
 
@@ -81,3 +84,7 @@ Workflow dosyasının depoda bulunması testin geçtiği anlamına gelmez. Gerç
 Birincil kaynaklar raporda numaralı olarak gösterilmiştir. Üçüncü taraf araştırma yazıları ve container imajları repo içine kopyalanmamıştır. Bütün repo dosyaları `SHA256SUMS` ile listelenir; bu dosya dijital imza değildir.
 
 Henüz açık lisans atanmamıştır: [LICENSING.md](LICENSING.md). Public erişim ile açık kaynak lisansı aynı şey değildir.
+
+## Web sitesi için sürüm ön kontrolü
+
+Laboratuvar dışında tek bir yetkili URL veya eldeki sürüm dizgesi için `tools/php2shell_version_check.py` kullanılabilir. Bu araç istismar testi yapmaz ve SAFE sonucu üretmez. Kullanım, durumların yorumu ve Privia Security aracıyla karşılaştırma: [Sürüm ön kontrolü](docs/SURUM_ON_KONTROLU_TR.md).

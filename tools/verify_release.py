@@ -49,7 +49,7 @@ def verify_sources():
     paths += list((LAB / 'config').iterdir())
     paths += list((LAB / 'tools').glob('*.py'))
     paths += list((LAB / 'tests').glob('*.py'))
-    paths += [LAB / 'compose.yaml']
+    paths += [LAB / 'compose.yaml', ROOT / 'tools' / 'php2shell_version_check.py']
     for path in paths:
         if path.read_text().rstrip() not in report:
             raise ValueError('Source differs from report appendix: ' + str(path))

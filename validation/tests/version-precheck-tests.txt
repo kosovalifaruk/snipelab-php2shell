@@ -1,0 +1,14 @@
+test_all_boundaries (test_version_check.VersionChecks.test_all_boundaries) ... ok
+test_both_headers_independent (test_version_check.VersionChecks.test_both_headers_independent) ... ok
+test_iis_does_not_exclude_php (test_version_check.VersionChecks.test_iis_does_not_exclude_php) ... ok
+test_invalid_versions (test_version_check.VersionChecks.test_invalid_versions) ... ok
+test_no_tls_downgrade (test_version_check.VersionChecks.test_no_tls_downgrade) ... ok
+test_package_and_prerelease (test_version_check.VersionChecks.test_package_and_prerelease) ... ok
+test_real_http_redirect_conflict_and_unknown (test_version_check.VersionChecks.test_real_http_redirect_conflict_and_unknown) ... ok
+test_unknown_branches (test_version_check.VersionChecks.test_unknown_branches) ... ok
+test_url_credentials_rejected (test_version_check.VersionChecks.test_url_credentials_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.010s
+
+OK

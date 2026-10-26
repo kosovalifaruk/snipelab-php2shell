@@ -2,8 +2,8 @@
   "schema": "snipelab-publication-checks-v1",
   "checked_on": "2026-10-26",
   "time_zone": "Asia/Famagusta",
-  "report_version": "3.0",
-  "publication_package": "3.0.4",
+  "report_version": "3.1",
+  "publication_package": "3.0.6",
   "python_http_contract_tests": {
     "passed": 8,
     "failed": 0
@@ -19,12 +19,17 @@
     ],
     "result": "passed"
   },
-  "source_files_equal_report_appendix": 11,
+  "source_files_equal_report_appendix": 12,
   "git_ignore_checks": [
     "php2shell-lab/evidence/private-runtime.json",
     "php2shell-lab/images.lock.env",
     ".env"
   ],
   "docker_php_runtime_executed": false,
-  "github_actions_executed": false
+  "github_actions_executed": false,
+  "version_precheck_tests": {
+    "passed": 9,
+    "failed": 0,
+    "scope": "version_classification_and_local_http_only"
+  }
 }

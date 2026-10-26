@@ -9,7 +9,9 @@
 Atilla Yusuf Er  
 Prof. Dr. Arif SARI  
 **Teknik bilgi kesim tarihi:** 25 Ekim 2026  
-**Sürüm:** 3.0  
+**Rapor sürümü:** 3.1  
+**Dağıtım paketi:** 3.0.6  
+**Araç güncellemesi:** 26 Ekim 2026  
 **Sınıflandırma:** Teknik analiz ve kurumsal savunma
 
 ## Amaç kapsam ve hedef kitle
@@ -1236,3 +1238,181 @@ if __name__ == '__main__':
 Her kurum, kendi kabul kayıtlarını `evidence/` altında ayrı zaman damgasıyla saklamalıdır. `images.lock.env`, imajlar gerçekten çekildikten sonra o ortamda üretilir; paylaşılan paket içinde uydurma veya boş digest bulunmaz. Sonraki çalıştırmalarda aynı digest ve aynı kod sürümü birlikte kullanılmalıdır.
 
 Rapor ve paket sürümü 3.0'dır. Yerel HTTP fixture testleri gerçek PHP çalışma testlerinden ayrı tutulur. Yeni paket veya imaj seçilirse sadece etiket değiştirmek yerine beklenti sürümü, doğrulama kaydı ve rapor birlikte güncellenmelidir.
+
+
+# EK B WEB SÜRÜMÜ ÖN KONTROLÜ
+
+## 26. Web sitesi için sürüm ön kontrolü
+
+Bu ek 26 Ekim 2026 tarihli araç güncellemesini kapsar. Depo kökündeki tools/php2shell_version_check.py, tek bir açıkça seçilmiş URL’nin HTTP başlıklarında görünen PHP sürümünü veya elle verilen sürüm dizgesini sınıflandırır. Gerçek bellek bozulması, OOM veya kod çalıştırma isteği göndermez. Başlık verisi çalışan motoru kesin olarak temsil etmeyebilir; sonuç bir ön incelemedir.
+
+### 26.1 İki aracın görev ayrımı
+
+php2shell-lab/tools/check.py, sabit yerel laboratuvar hedeflerinde sürüm, SAPI, etkin ayar ve normal yükleme özetini doğrular. Yeni araç bu kontrolleri yapmaz; tanılama endpointi yüklemeden bir web yanıtından sürüm işareti arar. Laboratuvarın pass değeri ile yeni aracın sürüm aralığı sonuçları birbirinin yerine kullanılamaz.
+
+### 26.2 Kullanım ve kanıt dosyası
+
+Komutları depo kökünde çalıştırın. Örnek alan adını yalnız yetkili olduğunuz hizmetle değiştirin. Sonuçta seçilen URL kaydedilir; parola, token veya oturum bilgisi içeren URL kullanmayın. URL içinde kullanıcı adı ve parola kabul edilmez.
+
+```bash
+python3 tools/php2shell_version_check.py --url https://example.com/ --output version-evidence.json
+python3 tools/php2shell_version_check.py --version 8.5.11
+python3 tools/php2shell_version_check.py --version 8.3.6-0ubuntu0.24.04.13
+```
+
+Araç bir normal GET isteği gönderir; sayfa gövdesini sürüm kanıtı saymaz, yönlendirme takip etmez ve ortam proxy ayarlarını kullanmaz. TLS doğrulaması hatada otomatik kapatılmaz. Kurum içi sertifika zinciri için --ca-file company-ca.pem verilebilir. HTTP timeout değeri mutlak DNS ve toplam işlem süresi garantisi değildir.
+
+### 26.3 Sonuç durumları ve yorum
+
+| Durum | Yorum |
+|---|---|
+| BELOW_UPSTREAM_FIX | Bildirilen sürüm kayıtlı upstream eşiğinin altında. Sağlayıcı backport kanıtını kontrol edin. |
+| AT_OR_ABOVE_UPSTREAM_FIX | Bildirilen sürüm kayıtlı eşiğe ulaşıyor. Çalışan süreç ve sağlayıcı paketi ayrıca doğrulanmalı. |
+| PACKAGE_OR_PRERELEASE_REVIEW | Paket veya ön sürüm eki var. Otomatik yama hükmü verilmedi. |
+| UNMAPPED_BRANCH | Dal tabloda yok. Destek ve sağlayıcı düzeltmesi ayrıca incelenmeli. |
+| CONFLICTING_VERSIONS | Başlıklarda farklı sürümler görüldü; otomatik karar verilmedi. |
+| UNKNOWN | Başlıklarda PHP sürümü bulunamadı. PHP yok veya güvenli sonucu çıkarılamaz. |
+| REDIRECT_NOT_FOLLOWED | Yanıt yönlendirme; başka URL’ye geçilmedi. |
+| ERROR | TLS, ağ veya yanıt hatası; sürüm sonucu üretilemedi. |
+
+JSON kaydı kural tarihini, kaynak bültenleri, zaman damgasını ve gözlemleri içerir. exploitation_tested=false ve provider_patch_verified=false alanları kanıt sınırını açık bırakır. Çıkış kodu 0 kanıt üretildiğini, 2 kullanım veya çalışma hatasını gösterir; 0 güvenli anlamına gelmez. Otomasyon status alanını değerlendirmelidir.
+
+### 26.4 Test kapsamı ve kabul
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+Yeni aracın dokuz testi geçti. Kapsam; dört dalın sürüm eşikleri, paket ve ön sürüm ekleri, eşlenmemiş dallar, başlık önceliği, IIS belirsizliği, hatalı sürüm ve URL, TLS hatasında tekrar denememe ve yerel HTTP sunucusunda yönlendirme, çelişki ve gövdeyi kanıt saymama davranışlarıdır. Laboratuvarın sekiz HTTP fixture testi ayrı dizindedir. Bu toplamlar Docker/PHP çalıştırması veya CVE istismar testi değildir. Gerçek PHP runtime doğrulamasının mevcut sınırlılıkları devam eder.
+
+### 26.5 Kaynak ve üçüncü taraf araç değerlendirmesi
+
+Karşılaştırılan araç Privia Security php2shell-check deposudur: https://github.com/Privia-Security/php2shell-check . İncelenen php2shell_check.py Git blob kimliği 21874116c2bdaf052a75581249c106efdfe5eb2c değeridir. Araç HTTP sürüm ön incelemesi ve toplu hedef desteği sunar; laboratuvar kontrollerinin eşdeğeri değildir. İncelenen kopyada TLS doğrulamasını otomatik düşürme, IIS başlığından PHP yokluğu çıkarma, sürümden SAFE hükmü verme ve bazı başlıkları kaçırma gibi noktalar görülmüştür.
+
+Yeni yardımcı araç ayrı yazılmıştır; orijinal script pakete kopyalanmamıştır. İncelenen üçüncü taraf kod MIT lisanslıdır; doğrudan kopyalama veya önemli türetme yapılırsa Privia Security telif bildirimi ve MIT lisansı korunmalıdır. Ayrıntılı karşılaştırma docs/SURUM_ON_KONTROLU_TR.md içindedir. Sürüm eşikleri rapordaki PHP resmî GHSA bültenlerine dayanır; bu ek yeni bir CVE keşfi veya bağımsız yama doğrulaması iddiası içermez.
+
+## 27. Sürüm ön kontrol aracının tam kaynağı
+
+```python
+#!/usr/bin/env python3
+"""Read HTTP headers or assess a supplied PHP version; no exploit test."""
+import argparse
+import json
+import re
+import ssl
+from datetime import datetime, timezone
+from urllib.parse import urlsplit
+from urllib.request import Request, build_opener, ProxyHandler, HTTPRedirectHandler, HTTPSHandler
+from urllib.error import HTTPError, URLError
+
+FIX = {(8, 2): 35, (8, 3): 36, (8, 4): 27, (8, 5): 12}
+RULESET_DATE = '2026-10-26'
+SOURCES = [
+ 'https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w',
+ 'https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp',
+]
+BANNER = re.compile(r'\bPHP[ /]+(\d+\.\d+\.\d+(?:[-+~.a-zA-Z0-9]*)?)', re.I)
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+def assess(value):
+    match = re.fullmatch(r'(\d+)\.(\d+)\.(\d+)([-+~.a-zA-Z0-9]*)', value)
+    if not match:
+        raise ValueError('Use a complete version such as 8.5.11 or 8.3.6-0ubuntu0.24.04.13')
+    major, minor, patch = map(int, match.groups()[:3])
+    suffix = match.group(4)
+    fixed = FIX.get((major, minor))
+    if fixed is None:
+        status = 'UNMAPPED_BRANCH'
+    elif suffix:
+        status = 'PACKAGE_OR_PRERELEASE_REVIEW'
+    elif patch < fixed:
+        status = 'BELOW_UPSTREAM_FIX'
+    else:
+        status = 'AT_OR_ABOVE_UPSTREAM_FIX'
+    return {'reported_version': value, 'status': status,
+            'first_upstream_fix': f'{major}.{minor}.{fixed}' if fixed is not None else None,
+            'provider_patch_verified': False, 'exploitation_tested': False}
+
+def header_versions(headers):
+    found = []
+    for name in ['X-Powered-By', 'Server']:
+        for value in headers.get_all(name, []):
+            for match in BANNER.finditer(value):
+                found.append({'source': name, **assess(match.group(1))})
+    return found
+
+def validate_url(url):
+    parsed = urlsplit(url)
+    if (parsed.scheme not in ('http', 'https') or not parsed.hostname
+            or parsed.username is not None or parsed.password is not None
+            or parsed.fragment):
+        raise ValueError('Use an HTTP(S) URL without credentials or fragment')
+    if parsed.port is not None and not 1 <= parsed.port <= 65535:
+        raise ValueError('Invalid port')
+    return url
+
+def inspect_url(url, timeout=10, ca_file=None):
+    validate_url(url)
+    context = ssl.create_default_context(cafile=ca_file)
+    opener = build_opener(ProxyHandler({}), NoRedirect(), HTTPSHandler(context=context))
+    result = {'url': url, 'observations': [], 'status': 'UNKNOWN',
+              'tls_verification': 'enabled', 'redirects_followed': False,
+              'environment_proxy_used': False, 'body_inspected': False}
+    request = Request(url, headers={'User-Agent': 'SnipeLab-Version-Check/1.0'}, method='GET')
+    try:
+        try:
+            response = opener.open(request, timeout=timeout)
+        except HTTPError as exc:
+            response = exc  # Inspect error response headers too; never follow redirects.
+        with response:
+            result['http_status'] = response.code
+            result['observations'] = header_versions(response.headers)
+    except (URLError, OSError, ValueError) as exc:
+        result.update(status='ERROR', error=str(exc))
+        return result
+    if 300 <= result['http_status'] < 400:
+        result['status'] = 'REDIRECT_NOT_FOLLOWED'
+    else:
+        versions = {x['reported_version'] for x in result['observations']}
+        if len(versions) > 1:
+            result['status'] = 'CONFLICTING_VERSIONS'
+        elif versions:
+            result['status'] = result['observations'][0]['status']
+    return result
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--url', help='One explicitly selected HTTP(S) URL')
+    group.add_argument('--version', help='Full observed PHP or provider package version')
+    parser.add_argument('--timeout', type=float, default=10)
+    parser.add_argument('--ca-file', help='Trusted CA bundle for an internal HTTPS endpoint')
+    parser.add_argument('--output', help='Save JSON evidence to this file')
+    args = parser.parse_args()
+    if not 0 < args.timeout <= 60:
+        parser.error('timeout must be greater than 0 and at most 60 seconds')
+    try:
+        result = inspect_url(args.url, args.timeout, args.ca_file) if args.url else assess(args.version)
+    except (ValueError, OSError) as exc:
+        parser.error(str(exc))
+    evidence = {'schema': 'snipelab-version-precheck-v1',
+                'time_utc': datetime.now(timezone.utc).isoformat(),
+                'ruleset_date': RULESET_DATE, 'sources': SOURCES,
+                'scope': 'reported_version_only', 'result': result,
+                'exploitation_tested': False, 'provider_patch_verified': False,
+                'interpretation': 'HTTP headers may be absent, stale or misleading. '
+                'Confirm the serving PHP process and provider package advisory. '
+                'No SAFE or exploitability verdict is issued.'}
+    text = json.dumps(evidence, ensure_ascii=False, indent=2)
+    if args.output:
+        with open(args.output, 'w', encoding='utf-8') as handle:
+            handle.write(text + '\n')
+    print(text)
+    return 2 if result['status'] == 'ERROR' else 0
+
+if __name__ == '__main__':
+    raise SystemExit(main())
+```
