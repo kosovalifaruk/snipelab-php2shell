@@ -1,0 +1,52 @@
+name: php2shell-defense-lab
+x-php: &php
+  volumes:
+    - ./app:/var/www/html:ro
+    - ./config/00-lab.ini:/usr/local/etc/php/conf.d/00-lab.ini:ro
+  networks: [lab]
+  mem_limit: 256m
+  cpus: 1.0
+  pids_limit: 128
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: [NET_RAW]
+  tmpfs: ["/tmp:size=32m,mode=1777"]
+services:
+  apache-old:
+    <<: *php
+    image: ${PHP_OLD_APACHE:-php:8.5.11-apache}
+    ports: ["127.0.0.1:18081:80"]
+  apache-fixed:
+    <<: *php
+    image: ${PHP_FIXED_APACHE:-php:8.5.12-apache}
+    ports: ["127.0.0.1:18082:80"]
+  apache-mitigated:
+    <<: *php
+    image: ${PHP_OLD_APACHE:-php:8.5.11-apache}
+    ports: ["127.0.0.1:18083:80"]
+    volumes:
+      - ./app:/var/www/html:ro
+      - ./config/00-lab.ini:/usr/local/etc/php/conf.d/00-lab.ini:ro
+      - ./config/99-mitigation.ini:/usr/local/etc/php/conf.d/99-mitigation.ini:ro
+  fpm-old:
+    <<: *php
+    image: ${PHP_OLD_FPM:-php:8.5.11-fpm}
+    profiles: [fpm]
+  fpm-fixed:
+    <<: *php
+    image: ${PHP_FIXED_FPM:-php:8.5.12-fpm}
+    profiles: [fpm]
+  gateway:
+    image: ${NGINX_IMAGE:-nginx:1.28.0-alpine}
+    profiles: [fpm]
+    depends_on: [fpm-old, fpm-fixed]
+    ports: ["127.0.0.1:18084:8084", "127.0.0.1:18085:8085"]
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks: [lab]
+    mem_limit: 96m
+    cpus: 0.5
+    pids_limit: 64
+    security_opt: ["no-new-privileges:true"]
+networks:
+  lab:
+    internal: true

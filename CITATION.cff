@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "Bu teknik çalışma için aşağıdaki yazar ve sürüm bilgilerini kullanabilirsiniz."
+type: software
+title: "SnipeLab PHP2Shell Teknik Analiz ve Kurumsal Savunma"
+version: 3.0.4
+authors:
+  - family-names: TOKMAK
+    given-names: Ömer
+    affiliation: SNIPELAB
+  - family-names: Er
+    given-names: Atilla Yusuf
+    affiliation: SNIPELAB
+  - family-names: SARI
+    given-names: Arif
+    affiliation: SNIPELAB
+abstract: "Kamu ve özel sektör BT ekipleri için teknik rapor ve izole PHP yapılandırma doğrulama laboratuvarı."
+keywords:
+  - PHP2Shell
+  - PHP
+  - SnipeLab
+  - defensive-security

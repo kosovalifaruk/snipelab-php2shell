@@ -1,0 +1,15 @@
+{
+  "scope": "abstract_state_lifetime_model",
+  "without_reset": {
+    "reset_before_release": false,
+    "invariant_ok": false,
+    "consumer_outcome": "invalid reference detected",
+    "real_uaf_or_rce_executed": false
+  },
+  "with_reset": {
+    "reset_before_release": true,
+    "invariant_ok": true,
+    "consumer_outcome": "no stale reference",
+    "real_uaf_or_rce_executed": false
+  }
+}

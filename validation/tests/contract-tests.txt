@@ -1,0 +1,13 @@
+test_all_five_http_fixtures_pass (test_controls.Controls.test_all_five_http_fixtures_pass) ... ok
+test_bad_endpoint_is_rejected (test_controls.Controls.test_bad_endpoint_is_rejected) ... ok
+test_lifecycle_invariants (test_controls.Controls.test_lifecycle_invariants) ... ok
+test_oom_500_is_not_exploit_proof (test_controls.Controls.test_oom_500_is_not_exploit_proof) ... ok
+test_redirect_not_followed (test_controls.Controls.test_redirect_not_followed) ... ok
+test_unknown_target_is_rejected (test_controls.Controls.test_unknown_target_is_rejected) ... ok
+test_upload_corruption_fails (test_controls.Controls.test_upload_corruption_fails) ... ok
+test_wrong_version_fails (test_controls.Controls.test_wrong_version_fails) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.017s
+
+OK

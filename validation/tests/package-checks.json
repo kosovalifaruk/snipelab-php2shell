@@ -1,0 +1,30 @@
+{
+  "schema": "snipelab-publication-checks-v1",
+  "checked_on": "2026-10-26",
+  "time_zone": "Asia/Famagusta",
+  "report_version": "3.0",
+  "publication_package": "3.0.4",
+  "python_http_contract_tests": {
+    "passed": 8,
+    "failed": 0
+  },
+  "readiness_helper": {
+    "live_localhost_fixtures": 5,
+    "result": "passed"
+  },
+  "workflow_yaml_and_shell_syntax": {
+    "files": [
+      "checks.yml",
+      "runtime.yml"
+    ],
+    "result": "passed"
+  },
+  "source_files_equal_report_appendix": 11,
+  "git_ignore_checks": [
+    "php2shell-lab/evidence/private-runtime.json",
+    "php2shell-lab/images.lock.env",
+    ".env"
+  ],
+  "docker_php_runtime_executed": false,
+  "github_actions_executed": false
+}
