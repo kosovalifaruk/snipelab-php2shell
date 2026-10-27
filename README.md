@@ -87,4 +87,4 @@ Henüz açık lisans atanmamıştır: [LICENSING.md](LICENSING.md). Public eriş
 
 ## Web sitesi için sürüm ön kontrolü
 
-Laboratuvar dışında tek bir yetkili URL veya eldeki sürüm dizgesi için `tools/php2shell_version_check.py` kullanılabilir. Bu araç istismar testi yapmaz ve SAFE sonucu üretmez. Kullanım, durumların yorumu ve Privia Security aracıyla karşılaştırma: [Sürüm ön kontrolü](docs/SURUM_ON_KONTROLU_TR.md).
+Laboratuvar dışında tek bir yetkili URL veya eldeki sürüm dizgesi için `tools/php2shell_version_check.py` kullanılabilir. Bu araç istismar testi yapmaz ve SAFE sonucu üretmez.[Sürüm ön kontrolü](docs/SURUM_ON_KONTROLU_TR.md).
